@@ -1,169 +1,264 @@
-import React, { useState, useEffect } from "react";
-import Carousel from "react-slick"; // Assuming you use react-slick for the carousel
+import { Carousel } from 'antd';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import axios from "axios"; // To make API calls
+import { Button } from 'antd';
 
-const Home = () => {
-  const [categories, setCategories] = useState([]);
-  const [showCarousel, setShowCarousel] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/categories");
-        const categoriesData = response.data;
-
-        // Fetch items for each category
-        const categoriesWithItems = await Promise.all(
-          categoriesData.map(async (category) => {
-            const itemsResponse = await axios.get(
-              `http://localhost:5000/api/products?category=${category}`
-            );
-            return { name: category, items: itemsResponse.data };
-          })
-        );
-
-        setCategories(categoriesWithItems);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-
-    fetchCategories();
-
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  const settings = {
-    infinite: true,
-    speed: 500,
-    slidesToShow: windowWidth >= 1024 ? 6 : windowWidth >= 600 ? 4 : 2,
-    slidesToScroll: 1,
+function Home() {
+  const setting = {
     autoplay: true,
-    autoplaySpeed: 3000,
-    arrows: true,
+    autoplaySpeed: 2500,
     dots: true,
-    pauseOnHover: true,
-    prevArrow: <div className="custom-prev-arrow">Prev</div>,
-    nextArrow: <div className="custom-next-arrow">Next</div>,
-  };
-
-  const toggleCarousel = () => {
-    setShowCarousel(!showCarousel);
+    infinite: true,
+    slidesToScroll: true,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
   };
 
   return (
-    <div className="relative overflow-hidden">
-      {/* Welcome Section with Full Screen Background */}
-      <div
-        className="relative bg-cover bg-center h-screen text-center text-white flex items-center justify-center" style={{ backgroundImage: `url('/wallpaper/lake.jpg')` }}>
-        <div className="bg-black bg-opacity-30 w-full h-full absolute inset-0 z-0" ></div> {/* Reduced opacity */}
-        <div className="z-10">
-          <h1 className="text-5xl font-bold">Welcome to Our Wallpaper Store</h1>
-          <p className="mt-4 text-lg">Discover stunning wallpapers for every mood and occasion</p>
+    <>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+      <div className='bg-gray-200 text-white'>
+        <div
+          className="relative flex items-center justify-center text-center"
+          style={{
+            backgroundImage: 'url(/Wallpapers/deer.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            height: '100vh',
+          }}
+        >
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+
+          <div className="relative z-10 text-white">
+            <h1 className="text-5xl md:text-6xl font-extrabold mb-4">
+              Welcome to SilkOn
+            </h1>
+            <p className="text-lg md:text-xl max-w-xl mx-auto">
+              Discover the finest wallpapers to transform your space into something truly extraordinary.
+            </p>
+          </div>
         </div>
-      </div>
 
-
-      {/* Toggle Button for Categories */}
-      <div className="flex justify-center mt-8">
-        <button
-          onClick={toggleCarousel}
-          className="bg-blue-600 text-white py-2 px-4 w-full rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
-          Browse Categories
-        </button>
-      </div>
-
-      {/* Show Carousel if toggle is true */}
-      {showCarousel && (
-        <div className="relative mb-8 mt-12">
-          <Carousel {...settings}>
-            {categories.map((category, index) => (
-              <div key={index} className="text-center">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">{category.name}</h3>
-
-                {/* Display one item from each category */}
-                <div className="flex justify-center">
-                  {category.items.slice(0, 1).map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="w-64 h-64 mx-4 bg-white rounded-lg shadow-lg relative overflow-hidden">
-                      <img
-                        src={`http://localhost:5000${item.imageUrl}`}
-                        alt={item.name}
-                        className="w-full h-full object-cover rounded-lg transition duration-300 ease-in-out hover:scale-105"
-                      />
-                      <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-50 text-white text-center py-2">
-                        <h4 className="text-lg">{item.name}</h4>
-                      </div>
-                    </div>
-                  ))}
+        <h2 className="text-3xl text-gray-800 font-bold text-center my-10">Trending Wallpapers</h2>
+        <section>
+          <div class="px-2 mx-auto max-w-screen-xl sm:py-4 lg:px-6 mb-10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 h-full">
+              <div class="col-span-2 sm:col-span-1 md:col-span-2 h-auto md:h-full flex flex-col">
+                <a href="" class="group relative flex flex-col overflow-hidden rounded-lg px-4 pb-4 pt-40 flex-grow">
+                  <img src="/Wallpapers/pxfuel.jpg" alt="" class="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out" />
+                  <div class="absolute inset-0 bg-gradient-to-b from-gray-900/25 to-gray-900/5"></div>
+                  <h3 class="z-10 text-2xl font-medium absolute top-0 left-0 p-4 xs:text-xl md:text-2xl">Nature</h3>
+                </a>
+              </div>
+              <div class="col-span-2 sm:col-span-1 md:col-span-2 ">
+                <a href="" class="group relative flex flex-col overflow-hidden rounded-lg px-4 pb-4 pt-40 mb-4">
+                  <img src="/Wallpapers/wallpy.jpg" alt="" class="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out" />
+                  <div class="absolute inset-0 bg-gradient-to-b from-gray-900/25 to-gray-900/5"></div>
+                  <h3 class="z-10 text-2xl font-medium absolute top-0 left-0 p-4 xs:text-xl md:text-2xl">Car</h3>
+                </a>
+                <div class="grid gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-2">
+                  <a href="" class="group relative flex flex-col overflow-hidden rounded-lg px-4 pb-4 pt-40">
+                    <img src="/Wallpapers/spiderman-miles-lost-in-space-4k-0f.jpg" alt="" class="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out" />
+                    <div class="absolute inset-0 bg-gradient-to-b from-gray-900/25 to-gray-900/5"></div>
+                    <h3 class="z-10 text-2xl font-medium absolute top-0 left-0 p-4 xs:text-xl md:text-2xl">Miles Morales</h3>
+                  </a>
+                  <a href="" class="group relative flex flex-col overflow-hidden rounded-lg px-4 pb-4 pt-40">
+                    <img src="/Wallpapers/1870160.png" alt="" class="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out" />
+                    <div class="absolute inset-0 bg-gradient-to-b from-gray-900/25 to-gray-900/5"></div>
+                    <h3 class="z-10 text-2xl font-medium absolute top-0 left-0 p-4 xs:text-xl md:text-2xl">Avengers</h3>
+                  </a>
                 </div>
               </div>
-            ))}
-          </Carousel>
-        </div>
-      )}
+              <div class="col-span-2 sm:col-span-1 md:col-span-1  h-auto md:h-full flex flex-col">
+                <a href="" class="group relative flex flex-col overflow-hidden rounded-lg px-4 pb-4 pt-40 flex-grow">
+                  <img src="/Wallpapers/wallpy.png" alt="" class="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out" />
+                  <div class="absolute inset-0 bg-gradient-to-b from-gray-900/25 to-gray-900/5"></div>
+                  <h3 class="z-10 text-2xl font-medium absolute top-0 left-0 p-4 xs:text-xl md:text-2xl">Abstract</h3>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
 
-      {/* Featured Products Section */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 mt-12">
-        <div className="bg-white p-6 rounded-lg shadow-lg hover:scale-105 transition duration-300 ease-in-out">
-          <img
-            src="https://via.placeholder.com/200"
-            alt="Product 1"
-            className="w-full h-48 object-cover rounded-lg mb-4"
-          />
-          <h3 className="text-lg font-semibold text-gray-800">Product 1</h3>
+        <div className="bg-gray-800 mt-4 pb-5">
+          <h2 className="text-3xl font-bold text-white text-center mb-8 pt-10">Explore</h2>
+          <div className="mx-[9%] my-7">
+            <Carousel {...setting}>
+              <div>
+                <div className="flex items-center justify-between text-white p-4 rounded-lg">
+                  <div className="w-1/2 p-4">
+                    <h2 className="text-2xl font-bold">MOUNTAIN</h2>
+                    <p className="mt-4">This is some text content for Card 1. You can add more information here.</p>
+                    <button className="mt-4 px-3 py-1 rounded-md bg-gray-200 text-gray-800 font-bold">Get More</button>
+                  </div>
+
+                  <div className="w-1/2">
+                    <img
+                      src="/Wallpapers/lake.jpg"
+                      alt="Card 1"
+                      className="object-cover w-full h-full border-[5px] border-gray-200 rounded-3xl"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between text-white p-4 rounded-lg">
+                  <div className="w-1/2">
+                    <img
+                      src="/Wallpapers/spiderman-miles-lost-in-space-4k-0f.jpg"
+                      alt="Card 2"
+                      className="object-cover w-full h-full border-[5px] border-gray-200 rounded-3xl"
+                    />
+                  </div>
+
+                  <div className="w-1/2 p-4">
+                    <h2 className="text-2xl font-bold">SPACE</h2>
+                    <p className="mt-4">Explore the infinite beauty of space with stunning visuals.</p>
+                    <button className="mt-4 px-3 py-1 rounded-md bg-gray-200 text-gray-800 font-bold">Get More</button>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between text-white p-4 rounded-lg">
+                  <div className="w-1/2 p-4">
+                    <h2 className="text-2xl font-bold">NATURE</h2>
+                    <p className="mt-4">Discover breathtaking natural landscapes with our wallpaper collection.</p>
+                    <button className="mt-4 px-3 py-1 rounded-md bg-gray-200 text-gray-800 font-bold">Get More</button>
+                  </div>
+
+                  <div className="w-1/2">
+                    <img
+                      src="/Wallpapers/1162442.jpg"
+                      alt="Card 1"
+                      className="object-cover w-full h-full border-[5px] border-gray-200 rounded-3xl"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between text-white p-4 rounded-lg">
+                  <div className="w-1/2">
+                    <img
+                      src="/Wallpapers/wallpy.jpg"
+                      alt="Card 4"
+                      className="object-cover w-full h-full border-[5px] border-gray-200 rounded-3xl"
+                    />
+                  </div>
+
+                  <div className="w-1/2 p-4">
+                    <h2 className="text-2xl font-bold">CAR</h2>
+                    <p className="mt-4">Experience the hustle and bustle of Car life with our wallpapers.</p>
+                    <button className="mt-4 px-3 py-1 rounded-md bg-gray-200 text-gray-800 font-bold">Get More</button>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between text-white p-4 rounded-lg">
+                  <div className="w-1/2 p-4">
+                    <h2 className="text-2xl font-bold">ABSTRACT</h2>
+                    <p className="mt-4">Dive into the world of abstract art with these creative and unique wallpapers.</p>
+                    <button className="mt-4 px-3 py-1 rounded-md bg-gray-200 text-gray-800 font-bold">Get More</button>
+                  </div>
+
+                  <div className="w-1/2">
+                    <img
+                      src="/Wallpapers/wallpy.png"
+                      alt="Card 5"
+                      className="object-cover w-full h-full border-[5px] border-gray-200 rounded-3xl"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between text-white p-4 rounded-lg">
+                  <div className="w-1/2">
+                    <img
+                      src="/Wallpapers/lake.jpg"
+                      alt="Card 6"
+                      className="object-cover w-full h-full border-[5px] border-gray-200 rounded-3xl"
+                    />
+                  </div>
+
+                  <div className="w-1/2 p-4">
+                    <h2 className="text-2xl font-bold">BEACH</h2>
+                    <p className="mt-4">Relax and unwind with the calming beauty of beach-themed wallpapers.</p>
+                    <button className="mt-4 px-3 py-1 rounded-md bg-gray-200 text-gray-800 font-bold">Get More</button>
+                  </div>
+                </div>
+              </div>
+            </Carousel>
+          </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-lg hover:scale-105 transition duration-300 ease-in-out">
-          <img
-            src="https://via.placeholder.com/200"
-            alt="Product 2"
-            className="w-full h-48 object-cover rounded-lg mb-4"
-          />
-          <h3 className="text-lg font-semibold text-gray-800">Product 2</h3>
-        </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-lg hover:scale-105 transition duration-300 ease-in-out">
-          <img
-            src="https://via.placeholder.com/200"
-            alt="Product 3"
-            className="w-full h-48 object-cover rounded-lg mb-4"
-          />
-          <h3 className="text-lg font-semibold text-gray-800">Product 3</h3>
-        </div>
+        <section className="py-10">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">Wallpapers</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              {[
+                { imgSrc: '/Wallpapers/1162442.jpg', title: 'Multiverse' },
+                { imgSrc: '/Wallpapers/1545742.jpg', title: 'Space' },
+                { imgSrc: '/Wallpapers/wallpy.jpg', title: 'Lamborghini' },
+                { imgSrc: '/Wallpapers/pxfuel.jpg', title: 'Mountians' },
+                { imgSrc: '/Wallpapers/pxfuel (1).jpg', title: 'Sunset' },
+                { imgSrc: '/Wallpapers/lake.jpg', title: 'Green' },
+                { imgSrc: '/Wallpapers/1870160.png', title: 'Avengers' },
+                { imgSrc: '/Wallpapers/deer.png', title: 'Logo' }
+              ].map((item, index) => (
+                <div key={index} className="group relative">
+                  <div className="relative rounded-lg overflow-hidden shadow-lg">
+                    <img
+                      src={item.imgSrc}
+                      alt={`Wallpaper ${index + 1}`}
+                      className="w-full h-64 object-cover"
+                    />
 
-        <div className="bg-white p-6 rounded-lg shadow-lg hover:scale-105 transition duration-300 ease-in-out">
-          <img
-            src="https://via.placeholder.com/200"
-            alt="Product 4"
-            className="w-full h-48 object-cover rounded-lg mb-4"
-          />
-          <h3 className="text-lg font-semibold text-gray-800">Product 4</h3>
+                    <div className="absolute bottom-4 right-4 bg-black bg-opacity-50 rounded-lg">
+                      <button className="text-white w-10 h-10 flex items-center justify-center hover:cursor-pointer">
+                        <i className="fas fa-download"></i>
+                      </button>
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-50 rounded-lg"></div>
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <h3 className="text-lg font-medium">{item.title}</h3>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <div className="flex justify-center mt-8">
+          <button
+            className="mt-4 px-3 py-1 rounded-md bg-gray-800 text-gray-200 font-bold mb-7">
+            Load More
+          </button>
         </div>
       </div>
-
-      {/* More Featured Sections */}
-      <div className="my-12 bg-cover bg-center relative" style={{ backgroundImage: "url('https://via.placeholder.com/1500x1000')" }}>
-        <div className="bg-black bg-opacity-50 w-full h-full absolute inset-0 z-10"></div>
-        <div className="z-20 text-center text-white py-12">
-          <h3 className="text-3xl font-bold">Stunning Wallpaper Collection</h3>
-          <p className="mt-4 text-xl">Transform your space with our premium wallpaper collection</p>
-        </div>
-      </div>
-    </div>
+    </>
   );
-};
+}
 
 export default Home;
